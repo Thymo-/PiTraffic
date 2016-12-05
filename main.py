@@ -14,21 +14,39 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import time
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 
 def setup():
-    GPIO.setup(GPIO.BCM)
-    GPIO.setup(21, GPIO.OUT)
+#    GPIO.setup(GPIO.BCM)
+#    GPIO.setup(26, GPIO.IN)
+#    GPIO.setup(16, GPIO.OUT)
+#    GPIO.setup(20, GPIO.OUT)
+#    GPIO.setup(21, GPIO.OUT)
+    pass
 
 def red(n):
-    GPIO.output(n, GPIO.LOw)
+#    GPIO.output(16, True)
+#    GPIO.output(20, False)
+#    GPIO.output(21, False)
+    print("Light change: Red")
 
-# rood(GPIO)
-# geel(GPIO)
-# groen(GPIO)
+def amber(n):
+#    GPIO.output(16, False)
+#    GPIO.output(20, True)
+#    GPIO.output(21, False)
+    print("Light change: Amber")
+
+def green(n):
+#    GPIO.output(16, False)
+#    GPIO.output(20, False)
+#    GPIO.output(21, True)
+    print("Light change: Green")
 
 setup()
-while true:
-    GPIO.output(21, GPIO.HIGH)
+while True:
+    red(1)
     time.sleep(3)
-    GPIO.output(21, GPIO.LOW)
+    amber(1)
+    time.sleep(3)
+    green(1)
+    time.sleep(3)
