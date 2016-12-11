@@ -12,7 +12,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
-import time
+from time import sleep
 import RPi.GPIO as GPIO
 
 def setup():
@@ -52,46 +52,49 @@ def red(n):
         GPIO.output(16, True)
         GPIO.output(20, False)
         GPIO.output(21, False)
+        light1 = 0  
     elif n == 2:
         pass
     elif n == 3:
         pass
     else:
         print("Invalid!")
-    print("Light change: Red", n)
+    print("Light change: Red ", n)
 
 def amber(n):
     if n == 1:
         GPIO.output(16, False)
         GPIO.output(20, True)
         GPIO.output(21, False)
+        light1 = 1
     elif n == 2:
         pass
     elif n == 3:
         pass
     else:
         print("Invalid!")
-    print("Light change: Amber", n)
+    print("Light change: Amber ", n)
 
 def green(n):
     if n == 1:
         GPIO.output(16, False)
         GPIO.output(20, False)
         GPIO.output(21, True)
+        light1 = "green"
     elif n == 2:
         pass
     elif n == 3:
         pass
     else:
         print("Invalid!")
-    print("Light change: Green", n)
+    print("Light change: Green ", n)
 
 setup()
 while True:
     red(1)
-    time.sleep(3)
+    sleep(3)
     amber(1)
-    time.sleep(3)
+    sleep(3)
     green(1)
-    time.sleep(3)
+    sleep(3)
 GPIO.cleanup()
