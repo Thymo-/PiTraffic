@@ -16,7 +16,7 @@ from time import sleep
 import RPi.GPIO as GPIO
 
 def setup():
-    GPIO.setup(GPIO.BCM) # Use BCM chip numbering
+    GPIO.setmode(GPIO.BCM) # Use BCM chip numbering
     # Define inputs
     GPIO.setup(26, GPIO.IN)
     GPIO.setup(19, GPIO.IN)
@@ -52,13 +52,28 @@ def red(n):
         GPIO.output(16, True)
         GPIO.output(20, False)
         GPIO.output(21, False)
-        light1 = 0  
     elif n == 2:
-        pass
+        GPIO.output(8, True)
+        GPIO.output(7, False)
+        GPIO.output(12, False)
     elif n == 3:
-        pass
+        GPIO.output(23, True)
+        GPIO.output(24, False)
+        GPIO.output(25, False)
+    elif n == 4:
+        GPIO.output(2, True)
+        GPIO.output(3, False)
+        GPIO.output(18, False)
+    elif n == 5:
+        GPIO.output(4, True)
+        GPIO.output(17, False)
+        GPIO.output(27, False)
+    elif n == 6:
+        GPIO.output(22, True)
+        GPIO.output(10, False)
+        GPIO.output(9, False)
     else:
-        print("Invalid!")
+        print("Invalid identifier!")
     print("Light change: Red ", n)
 
 def amber(n):
@@ -66,13 +81,28 @@ def amber(n):
         GPIO.output(16, False)
         GPIO.output(20, True)
         GPIO.output(21, False)
-        light1 = 1
     elif n == 2:
-        pass
+        GPIO.output(8, False)
+        GPIO.output(7, True)
+        GPIO.output(12, False)
     elif n == 3:
-        pass
+        GPIO.output(23, False)
+        GPIO.output(24, True)
+        GPIO.output(25, False)
+    elif n == 4:
+        GPIO.output(2, False)
+        GPIO.output(3, True)
+        GPIO.output(18, False)
+    elif n == 5:
+        GPIO.output(4, False)
+        GPIO.output(17, True)
+        GPIO.output(27, False)
+    elif n == 6:
+        GPIO.output(22, False)
+        GPIO.output(10, True)
+        GPIO.output(9, False)
     else:
-        print("Invalid!")
+        print("Invalid identifier!")
     print("Light change: Amber ", n)
 
 def green(n):
@@ -80,21 +110,51 @@ def green(n):
         GPIO.output(16, False)
         GPIO.output(20, False)
         GPIO.output(21, True)
-        light1 = "green"
     elif n == 2:
-        pass
+        GPIO.output(8, False)
+        GPIO.output(7, False)
+        GPIO.output(12, True)
     elif n == 3:
-        pass
+        GPIO.output(23, False)
+        GPIO.output(24, False)
+        GPIO.output(25, True)
+    elif n == 4:
+        GPIO.output(2, False)
+        GPIO.output(3, False)
+        GPIO.output(18, True)
+    elif n == 5:
+        GPIO.output(4, False)
+        GPIO.output(17, False)
+        GPIO.output(27, True)
+    elif n == 6:
+        GPIO.output(22, False)
+        GPIO.output(10, False)
+        GPIO.output(9, True)
     else:
-        print("Invalid!")
+        print("Invalid identifier!")
     print("Light change: Green ", n)
 
 setup()
 while True:
     red(1)
+    red(2)
+    red(3)
+    red(4)
+    red(5)
+    red(6)
     sleep(3)
     amber(1)
+    amber(2)
+    amber(3)
+    amber(4)
+    amber(5)
+    amber(6)
     sleep(3)
     green(1)
+    green(2)
+    green(3)
+    green(4)
+    green(5)
+    green(6)
     sleep(3)
 GPIO.cleanup()
