@@ -133,6 +133,7 @@ def green(n):
     else:
         print("Invalid identifier!")
     print("Light change: Green ", n)
+
 try:
     setup()
     while True:
