@@ -15,34 +15,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 from time import sleep
 import RPi.GPIO as GPIO
 
+GPIO_inputs = [26,19,13,6,5,11]
+GPIO_outputs = [16,20,21,12,7,8,25,24,23,18,2,3,4,17,27,22,10,9]
+
 def setup():
     GPIO.setmode(GPIO.BCM) # Use BCM chip numbering
     # Define inputs
-    GPIO.setup(26, GPIO.IN)
-    GPIO.setup(19, GPIO.IN)
-    GPIO.setup(13, GPIO.IN)
-    GPIO.setup(6, GPIO.IN)
-    GPIO.setup(5, GPIO.IN)
-    GPIO.setup(11, GPIO.IN)
+    GPIO.setup(GPIO_inputs, GPIO.IN)
     # Define outputs
-    GPIO.setup(16, GPIO.OUT)
-    GPIO.setup(20, GPIO.OUT)
-    GPIO.setup(21, GPIO.OUT)
-    GPIO.setup(12, GPIO.OUT)
-    GPIO.setup(7, GPIO.OUT)
-    GPIO.setup(8, GPIO.OUT)
-    GPIO.setup(25, GPIO.OUT)
-    GPIO.setup(24, GPIO.OUT)
-    GPIO.setup(23, GPIO.OUT)
-    GPIO.setup(18, GPIO.OUT)
-    GPIO.setup(2, GPIO.OUT)
-    GPIO.setup(3, GPIO.OUT)
-    GPIO.setup(4, GPIO.OUT)
-    GPIO.setup(17, GPIO.OUT)
-    GPIO.setup(27, GPIO.OUT)
-    GPIO.setup(22, GPIO.OUT)
-    GPIO.setup(10, GPIO.OUT)
-    GPIO.setup(9, GPIO.OUT)
+    GPIO.setup(GPIO_outputs, GPIO.OUT)
 
 def sensor_loop():
     pass
