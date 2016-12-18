@@ -25,8 +25,11 @@ def setup():
     # Define outputs
     GPIO.setup(GPIO_outputs, GPIO.OUT)
 
-def sensor_loop():
-    pass
+def sensor_high(channel):
+    print("Sensor went high: ", channel)
+
+def sensor_low(channel):
+    print("Sensor went low: ", channel)
 
 def red(n):
     if n == 1:
@@ -117,6 +120,8 @@ def green(n):
 
 try:
     setup()
+    GPIO.add_event_detect(gpio_inputs, GPIO.RISING, callback=sensor_high, bouncetime=200)
+    GPIO.add_event_detect(gpio_inputs, GPIO.FALLING, callback=sensor_low bouncetime=200)
     while True:
         red(1)
         red(2)
