@@ -21,15 +21,15 @@ GPIO_outputs = [16,20,21,12,7,8,25,24,23,18,2,3,4,17,27,22,10,9]
 def setup():
     GPIO.setmode(GPIO.BCM) # Use BCM chip numbering
     # Define inputs
-    GPIO.setup(GPIO_inputs, GPIO.IN)
+    GPIO.setup(GPIO_inputs, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     # Define outputs
     GPIO.setup(GPIO_outputs, GPIO.OUT)
 
-def sensor_high(channel):
-    print("Sensor went high: ", channel)
-
-def sensor_low(channel):
-    print("Sensor went low: ", channel)
+def sensor_event(channel):
+    if GPIO.input(channel):
+        print("Input went high: ", channel)
+    else:
+        print("Input went low: ", channel)
 
 def red(n):
     if n == 1:
@@ -120,9 +120,14 @@ def green(n):
 
 try:
     setup()
-    GPIO.add_event_detect(gpio_inputs, GPIO.RISING, callback=sensor_high, bouncetime=200)
-    GPIO.add_event_detect(gpio_inputs, GPIO.FALLING, callback=sensor_low bouncetime=200)
+    GPIO.add_event_detect(26, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
+    GPIO.add_event_detect(19, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
+    GPIO.add_event_detect(13, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
+    GPIO.add_event_detect(6, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
+    GPIO.add_event_detect(5, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
+    GPIO.add_event_detect(11, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
     while True:
+        break
         red(1)
         red(2)
         red(3)
@@ -144,5 +149,7 @@ try:
         green(5)
         green(6)
         sleep(3)
+    while True:
+        sleep(1)
 finally:
     GPIO.cleanup()
