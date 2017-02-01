@@ -33,14 +33,14 @@ def setup():
 def sensor_event(channel):
     if GPIO.input(channel):
         print("Input went high: ", channel)
-        queue.insert(channel) # kijken als hij al instaat!
+        queue.insert(channel) # Check if present.
     else:
         print("Input went low: ", channel)
-        #queue. Weghalen?
+        #queue. Remove?
 
 def priority(i):
     if i == 1:
-        
+        pass
     elif i == 2:
         pass
     elif i == 3:
@@ -229,6 +229,13 @@ def green(n):
         print("Invalid identifier!")
     print("Light change: Green ", n)
 
+def init(): # Initialization program
+    for a in range(1, 7):
+        amber(a)
+    sleep(3)
+    for a in range(1,7):
+        red(a)
+
 try:
     setup()
     GPIO.add_event_detect(26, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
@@ -237,10 +244,9 @@ try:
     GPIO.add_event_detect(6, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
     GPIO.add_event_detect(5, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
     GPIO.add_event_detect(11, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
+    init()
     while True: # Main program loop
+        pass
         
-        
-    while True:
-        sleep(1)
 finally:
     GPIO.cleanup()
