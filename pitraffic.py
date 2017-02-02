@@ -12,7 +12,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
-from time import sleep
+import time
 from collections import deque
 import RPi.GPIO as GPIO
 
@@ -143,7 +143,7 @@ def red(n):
         print("Invalid identifier!")
     print("Light change: Red ", n)
 
-def amber(n):
+def amber(n, t=3):
     if n == 1:
         GPIO.output(16, False)
         GPIO.output(20, True)
@@ -152,6 +152,7 @@ def amber(n):
         green_state.remove(green_state.index(n))
         amber_state.remove(amber_state.index(n))
         amber_state.append(n)
+        time.sleep(t)
 
     elif n == 2:
         GPIO.output(8, False)
@@ -161,6 +162,7 @@ def amber(n):
         green_state.remove(green_state.index(n))
         amber_state.remove(amber_state.index(n))
         amber_state.append(n)
+        time.sleep(t)
 
     elif n == 3:
         GPIO.output(23, False)
@@ -170,6 +172,7 @@ def amber(n):
         green_state.remove(green_state.index(n))
         amber_state.remove(amber_state.index(n))
         amber_state.append(n)
+        time.sleep(t)
 
     elif n == 4:
         GPIO.output(2, False)
@@ -179,6 +182,7 @@ def amber(n):
         green_state.remove(green_state.index(n))
         amber_state.remove(amber_state.index(n))
         amber_state.append(n)
+        time.sleep(t)
 
     elif n == 5:
         GPIO.output(4, False)
@@ -188,6 +192,7 @@ def amber(n):
         green_state.remove(green_state.index(n))
         amber_state.remove(amber_state.index(n))
         amber_state.append(n)
+        time.sleep(t)
 
     elif n == 6:
         GPIO.output(22, False)
@@ -197,6 +202,7 @@ def amber(n):
         green_state.remove(green_state.index(n))
         amber_state.remove(amber_state.index(n))
         amber_state.append(n)
+        time.sleep(t)
 
     else:
         print("Invalid identifier!")
@@ -263,8 +269,8 @@ def green(n):
 
 def makeway(): # Initialization program / Clear junction of traffic
     for a in range(1, 7):
-        amber(a)
-    sleep(3)
+        amber(a, 0)
+    time.sleep(3)
     for a in range(1, 7):
         red(a)
 
@@ -279,7 +285,7 @@ try:
     makeway() # Go into service
     while True: # Main program loop
         limit()
-        sleep(0.5)
+        time.sleep(0.5)
         
 finally:
     GPIO.cleanup()
