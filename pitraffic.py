@@ -52,6 +52,32 @@ def priority(i):
     elif i == 6:
         pass
 
+def limit():
+    t_now = time.time()
+    if (t_now - red1time) >= 120:
+        makeway()
+        green(1)
+
+    if (t_now - red2time) >= 120:
+        makeway()
+        green(2)
+    
+    if (t_now - red3time) >= 120:
+        makeway()
+        green(3)
+
+    if (t_now - red4time) >= 120:
+        makeway()
+        green(4)
+    
+    if (t_now - red5time) >= 120:
+        makeway()
+        green(5)
+    
+    if (t_now - red6time) >= 120:
+        makeway()
+        green(6)
+    
 def red(n):
     if n == 1:
         GPIO.output(16, True)
@@ -61,6 +87,7 @@ def red(n):
         green_state.remove(green_state.index(n))
         red_state.remove(red_state.remove(n)
         red_state.append(n)
+        red1time = time.time()
 
     elif n == 2:
         GPIO.output(8, True)
@@ -70,6 +97,7 @@ def red(n):
         green_state.remove(green_state.index(n))
         red_state.remove(red_state.remove(n)
         red_state.append(n)
+        red2time = time.time()
         
     elif n == 3:
         GPIO.output(23, True)
@@ -79,6 +107,7 @@ def red(n):
         green_state.remove(green_state.index(n))
         red_state.remove(red_state.remove(n)
         red_state.append(n)
+        red3time = time.time()
         
     elif n == 4:
         GPIO.output(2, True)
@@ -88,6 +117,7 @@ def red(n):
         green_state.remove(green_state.index(n))
         red_state.remove(red_state.remove(n)
         red_state.append(n)
+        red4time = time.time()
         
     elif n == 5:
         GPIO.output(4, True)
@@ -97,6 +127,7 @@ def red(n):
         green_state.remove(green_state.index(n))
         red_state.remove(red_state.remove(n)
         red_state.append(n)
+        red5time = time.time()
         
     elif n == 6:
         GPIO.output(22, True)
@@ -106,6 +137,7 @@ def red(n):
         green_state.remove(green_state.index(n))
         red_state.remove(red_state.remove(n)
         red_state.append(n)
+        red6time = time.time()
         
     else:
         print("Invalid identifier!")
@@ -229,24 +261,25 @@ def green(n):
         print("Invalid identifier!")
     print("Light change: Green ", n)
 
-def init(): # Initialization program
+def makeway(): # Initialization program / Clear junction of traffic
     for a in range(1, 7):
         amber(a)
     sleep(3)
-    for a in range(1,7):
+    for a in range(1, 7):
         red(a)
 
 try:
-    setup()
+    setup() # Hardware setup
     GPIO.add_event_detect(26, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
     GPIO.add_event_detect(19, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
     GPIO.add_event_detect(13, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
     GPIO.add_event_detect(6, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
     GPIO.add_event_detect(5, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
     GPIO.add_event_detect(11, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
-    init()
+    makeway() # Go into service
     while True: # Main program loop
-        pass
+        limit()
+        sleep(0.5)
         
 finally:
     GPIO.cleanup()
