@@ -45,6 +45,13 @@ def setup():
     GPIO.setup(GPIO_inputs, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     # Define outputs
     GPIO.setup(GPIO_outputs, GPIO.OUT)
+    # Setup event listeners
+    GPIO.add_event_detect(26, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
+    GPIO.add_event_detect(19, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
+    GPIO.add_event_detect(13, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
+    GPIO.add_event_detect(6, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
+    GPIO.add_event_detect(5, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
+    GPIO.add_event_detect(11, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
 
 def sensor_event(channel):
     if GPIO.input(channel):
@@ -332,14 +339,9 @@ def makeway(): # Clear junction of traffic
         time.sleep(3)
     for a in range(1, 7):
         red(a)
+
 try:
     setup() # Hardware setup
-    GPIO.add_event_detect(26, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
-    GPIO.add_event_detect(19, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
-    GPIO.add_event_detect(13, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
-    GPIO.add_event_detect(6, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
-    GPIO.add_event_detect(5, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
-    GPIO.add_event_detect(11, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
     init() # Go into service
     while True: # Main program loop
         limit()
