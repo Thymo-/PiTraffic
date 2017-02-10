@@ -16,11 +16,14 @@ import time
 import RPi.GPIO as GPIO
 
 GPIO_inputs = [26,19,13,6,5,11]
-GPIO_outputs = [20,21,12,7,8,25,24,23,18,2,3,4,17,27,22,10,9,14] # Pin 14 not used due to failure.
+GPIO_outputs = [20,21,12,7,8,25,24,23,18,2,3,4,17,27,22,10,9,14] # Pin 14 not used due to hardware failure on my board.
 
 # Settings
-max_timeout = 120 # Maximum amount of time traffic is permitted to wait.
-green_time = 6
+max_timeout = 20    # Maximum amount of time traffic is permitted to wait.
+green_time = 8      # Initial time a light is green.
+amber_time = 3      # Time a light stays amber before going red.
+extend = 3          # Time green light is extended by if cars still present
+max_iteration = 3   # Maximum amount of times green light is extended
 
 # Timers
 t_now = 0
@@ -39,6 +42,14 @@ state4 = 0
 state5 = 0
 state6 = 0
 
+# Sensor states: 0 = Free, 1 = Occupied
+sense1 = True
+sense2 = False
+sense3 = False
+sense4 = False
+sense5 = False
+sense6 = False
+
 def setup():
     GPIO.setmode(GPIO.BCM) # Use BCM chip numbering
     # Define inputs
@@ -54,26 +65,70 @@ def setup():
     GPIO.add_event_detect(11, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
 
 def sensor_event(channel):
-    if GPIO.input(channel):
+    global sense1
+    global sense2
+    global sense3
+    global sense4
+    global sense5
+    global sense6
+    if GPIO.input(channel): # Sensor high
+        if channel == 26:
+            sense1 = True
+        elif channel == 19:
+            sense2 = True
+        elif channel == 13:
+            sense3 = True
+        elif channel == 6:
+            sense4 = True
+        elif channel == 5:
+            sense5 = True
+        elif channel == 11:
+            sense6 = True
         print("Input went high: ", channel)
-        queue.insert(channel) # Check if present.
-    else:
+    else: # Sensor low
+        if channel == 26:
+            sense1 = False
+        elif channel == 19:
+            sense2 = False
+        elif channel == 13:
+            sense3 = False
+        elif channel == 6:
+            sense4 = False
+        elif channel == 5:
+            sense5 = False
+        elif channel == 11:
+            sense6 = False
         print("Input went low: ", channel)
-        #queue. Remove?
 
-def priority(i):
-    if i == 1:
-        pass
-    elif i == 2:
-        pass
-    elif i == 3:
-        pass
-    elif i == 4:
-        pass
-    elif i == 5:
-        pass
-    elif i == 6:
-        pass
+def priority():
+    makeway()
+    for i in range(1, 7):
+        if i == 1:
+            green(1)
+            green(3)
+            green(5)
+            time.sleep(green_time)
+            iteration = 0
+            while (sense1 or sense3 or sense5) and iteration < max_iteration and limit():
+                time.sleep(extend)
+                iteration += 1
+            amber(1, 0)
+            amber(3, 0)
+            amber(5, 0)
+            time.sleep(amber_time)
+            red(1, 0)
+            red(3, 0)
+            red(5, 0)
+        elif i == 2:
+            pass
+        elif i == 3:
+            pass
+        elif i == 4:
+            pass
+        elif i == 5:
+            pass
+        elif i == 6:
+            pass
 
 def limit():
     t_now = time.time()
@@ -81,33 +136,46 @@ def limit():
         makeway()
         green(1)
         time.sleep(green_time)
+        makeway()
+        return False
 
     if (t_now - red2time) >= max_timeout:
         makeway()
         green(2)
         time.sleep(green_time)
+        makeway()
+        return False
     
     if (t_now - red3time) >= max_timeout:
         makeway()
         green(3)
         time.sleep(green_time)
+        makeway()
+        return False
 
     if (t_now - red4time) >= max_timeout:
         makeway()
         green(4)
         time.sleep(green_time)
+        makeway()
+        return False
     
     if (t_now - red5time) >= max_timeout:
         makeway()
         green(5)
         time.sleep(green_time)
+        makeway()
+        return False
     
     if (t_now - red6time) >= max_timeout:
         makeway()
         green(6)
         time.sleep(green_time)
+        makeway()
+        return False
+    return True
     
-def red(n):
+def red(n, t=3):
     global state1
     global state2
     global state3
@@ -116,7 +184,7 @@ def red(n):
     global state6
     if n == 1:
         if state1 == 0:
-            amber(n)
+            amber(n, t)
         elif state1 == 1:
             pass
         else:
@@ -128,10 +196,9 @@ def red(n):
         red1time = time.time()
         state1 = 2
 
-
     elif n == 2:
         if state2 == 0:
-            amber(n)
+            amber(n, t)
         elif state2 == 1:
             pass
         else:
@@ -145,7 +212,7 @@ def red(n):
         
     elif n == 3:
         if state3 == 0:
-            amber(n)
+            amber(n, t)
         elif state3 == 1:
             pass
         else:
@@ -159,7 +226,7 @@ def red(n):
         
     elif n == 4:
         if state4 == 0:
-            amber(n)
+            amber(n, t)
         elif state4 == 1:
             pass
         else:
@@ -173,7 +240,7 @@ def red(n):
         
     elif n == 5:
         if state5 == 0:
-            amber(n)
+            amber(n, t)
         elif state5 == 1:
             pass
         else:
@@ -187,7 +254,7 @@ def red(n):
         
     elif n == 6:
         if state6 == 0:
-            amber(n)
+            amber(n, t)
         elif state6 == 1:
             pass
         else:
@@ -302,6 +369,59 @@ def green(n):
         print("Invalid identifier!")
     print("Light change: Green ", n)
 
+def off(n, t=3):
+    global state1
+    global state2
+    global state3
+    global state4
+    global state5
+    global state6
+    if n == 1:
+        GPIO.output(14, False)
+        GPIO.output(20, False)
+        GPIO.output(21, False)
+        state1 = 1
+        time.sleep(t)
+
+    elif n == 2:
+        GPIO.output(8, False)
+        GPIO.output(7, False)
+        GPIO.output(12, False)
+        state2 = 1
+        time.sleep(t)
+
+    elif n == 3:
+        GPIO.output(23, False)
+        GPIO.output(24, False)
+        GPIO.output(25, False)
+        state3 = 1
+        time.sleep(t)
+
+    elif n == 4:
+        GPIO.output(2, False)
+        GPIO.output(3, False)
+        GPIO.output(18, False)
+        state4 = 1
+        time.sleep(t)
+
+    elif n == 5:
+        GPIO.output(4, False)
+        GPIO.output(17, False)
+        GPIO.output(27, False)
+        state5 = 1
+        time.sleep(t)
+
+    elif n == 6:
+        GPIO.output(22, False)
+        GPIO.output(10, False)
+        GPIO.output(9, False)
+        state6 = 1
+        time.sleep(t)
+
+    else:
+        print("Invalid identifier!")
+    print("Light change: Off ", n)
+
 def getstate(a):
     if a == 1:
         global state1
@@ -324,6 +444,8 @@ def getstate(a):
 
 def init(): # Initialization program
     for a in range(1, 7):
+        off(a, 0)
+    for a in range(1, 7):
         amber(a, 0)
     time.sleep(3)
     for a in range(1, 7):
@@ -339,13 +461,14 @@ def makeway(): # Clear junction of traffic
         time.sleep(3)
     for a in range(1, 7):
         red(a)
+    time.sleep(2)
 
 try:
     setup() # Hardware setup
     init() # Go into service
     while True: # Main program loop
         limit()
-        #priority()
+        priority()
         time.sleep(0.5)
         
 finally:
