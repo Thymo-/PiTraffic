@@ -111,6 +111,7 @@ def priority():
             iteration = 0
             while (sense1 or sense3 or sense5) and iteration < max_iteration and limit():
                 time.sleep(extend)
+                print("Extending time requested by sensor")
                 iteration += 1
             amber(1, 0)
             amber(3, 0)
@@ -137,6 +138,7 @@ def limit():
         green(1)
         time.sleep(green_time)
         makeway()
+        print("Preempting light: 1")
         return False
 
     if (t_now - red2time) >= max_timeout:
@@ -144,6 +146,7 @@ def limit():
         green(2)
         time.sleep(green_time)
         makeway()
+        print("Preempting light: 2")
         return False
     
     if (t_now - red3time) >= max_timeout:
@@ -151,6 +154,7 @@ def limit():
         green(3)
         time.sleep(green_time)
         makeway()
+        print("Preempting light: 3")
         return False
 
     if (t_now - red4time) >= max_timeout:
@@ -158,6 +162,7 @@ def limit():
         green(4)
         time.sleep(green_time)
         makeway()
+        print("Preempting light: 4")
         return False
     
     if (t_now - red5time) >= max_timeout:
@@ -165,6 +170,7 @@ def limit():
         green(5)
         time.sleep(green_time)
         makeway()
+        print("Preempting light: 5")
         return False
     
     if (t_now - red6time) >= max_timeout:
@@ -172,6 +178,7 @@ def limit():
         green(6)
         time.sleep(green_time)
         makeway()
+        print("Preempting light: 6")
         return False
     return True
     
