@@ -24,6 +24,7 @@ green_time = 8      # Initial time a light is green.
 amber_time = 3      # Time a light stays amber before going red.
 extend = 3          # Time green light is extended by if cars still present
 max_iteration = 3   # Maximum amount of times green light is extended
+bounce = 100        # Reed switch debounce time. Must be greater than 0.
 
 # Timers
 t_now = 0
@@ -43,7 +44,7 @@ state5 = 0
 state6 = 0
 
 # Sensor states: 0 = Free, 1 = Occupied
-sense1 = True
+sense1 = False
 sense2 = False
 sense3 = False
 sense4 = False
@@ -57,12 +58,12 @@ def setup():
     # Define outputs
     GPIO.setup(GPIO_outputs, GPIO.OUT)
     # Setup event listeners
-    GPIO.add_event_detect(26, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
-    GPIO.add_event_detect(19, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
-    GPIO.add_event_detect(13, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
-    GPIO.add_event_detect(6, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
-    GPIO.add_event_detect(5, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
-    GPIO.add_event_detect(11, GPIO.BOTH, callback=sensor_event, bouncetime=1000)
+    GPIO.add_event_detect(26, GPIO.BOTH, callback=sensor_event, bouncetime=bounce)
+    GPIO.add_event_detect(19, GPIO.BOTH, callback=sensor_event, bouncetime=bounce)
+    GPIO.add_event_detect(13, GPIO.BOTH, callback=sensor_event, bouncetime=bounce)
+    GPIO.add_event_detect(6, GPIO.BOTH, callback=sensor_event, bouncetime=bounce)
+    GPIO.add_event_detect(5, GPIO.BOTH, callback=sensor_event, bouncetime=bounce)
+    GPIO.add_event_detect(11, GPIO.BOTH, callback=sensor_event, bouncetime=bounce)
 
 def sensor_event(channel):
     global sense1
@@ -84,7 +85,7 @@ def sensor_event(channel):
             sense5 = True
         elif channel == 11:
             sense6 = True
-        print("Input went high: ", channel)
+        print("Car detected: ", channel)
     else: # Sensor low
         if channel == 26:
             sense1 = False
@@ -98,11 +99,11 @@ def sensor_event(channel):
             sense5 = False
         elif channel == 11:
             sense6 = False
-        print("Input went low: ", channel)
+        print("Car no longer detected: ", channel)
 
 def priority():
     makeway()
-    for i in range(1, 7):
+    for i in range(1, 5):
         if i == 1:
             green(1)
             green(3)
@@ -121,64 +122,105 @@ def priority():
             red(3, 0)
             red(5, 0)
         elif i == 2:
-            pass
+            green(3)
+            green(4)
+            green(5)
+            time.sleep(green_time)
+            iteration = 0
+            while (sense3 or sense4 or sense5) and iteration < max_iteration and limit():
+                time.sleep(extend)
+                print("Extending time requested by sensor")
+                iteration += 1
+            amber(1, 0)
+            amber(2, 0)
+            amber(3, 0)
+            time.sleep(amber_time)
+            red(1, 0)
+            red(2, 0)
+            red(3, 0)
         elif i == 3:
-            pass
+            green(1)
+            green(2)
+            green(3)
+            time.sleep(green_time)
+            iteration = 0
+            while (sense1 or sense2 or sense3) and iteration < max_iteration and limit():
+                time.sleep(extend)
+                print("Extending time requested by sensor")
+                iteration += 1
+            amber(1, 0)
+            amber(2, 0)
+            amber(3, 0)
+            time.sleep(amber_time)
+            red(1, 0)
+            red(2, 0)
+            red(3, 0)
         elif i == 4:
-            pass
-        elif i == 5:
-            pass
-        elif i == 6:
-            pass
+            green(1)
+            green(5)
+            green(6)
+            time.sleep(green_time)
+            iteration = 0
+            while (sense1 or sense5 or sense6) and iteration < max_iteration and limit():
+                time.sleep(extend)
+                print("Extending time requested by sensor")
+                iteration += 1
+            amber(1, 0)
+            amber(5, 0)
+            amber(6, 0)
+            time.sleep(amber_time)
+            red(1, 0)
+            red(2, 0)
+            red(3, 0)
 
 def limit():
     t_now = time.time()
     if (t_now - red1time) >= max_timeout:
+        print("Preempting light: 1")
         makeway()
         green(1)
         time.sleep(green_time)
         makeway()
-        print("Preempting light: 1")
         return False
 
     if (t_now - red2time) >= max_timeout:
+        print("Preempting light: 2")
         makeway()
         green(2)
         time.sleep(green_time)
         makeway()
-        print("Preempting light: 2")
         return False
     
     if (t_now - red3time) >= max_timeout:
+        print("Preempting light: 3")
         makeway()
         green(3)
         time.sleep(green_time)
         makeway()
-        print("Preempting light: 3")
         return False
 
     if (t_now - red4time) >= max_timeout:
+        print("Preempting light: 4")
         makeway()
         green(4)
         time.sleep(green_time)
         makeway()
-        print("Preempting light: 4")
         return False
     
     if (t_now - red5time) >= max_timeout:
+        print("Preempting light: 5")
         makeway()
         green(5)
         time.sleep(green_time)
         makeway()
-        print("Preempting light: 5")
         return False
     
     if (t_now - red6time) >= max_timeout:
+        print("Preempting light: 6")
         makeway()
         green(6)
         time.sleep(green_time)
         makeway()
-        print("Preempting light: 6")
         return False
     return True
     
