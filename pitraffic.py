@@ -315,8 +315,6 @@ def red(n, t=3):
         red6time = time.time()
         state6 = 2
         
-    else:
-        print("Invalid identifier!")
     print("Light change: Red ", n)
 
 def amber(n, t=3):
@@ -368,8 +366,6 @@ def amber(n, t=3):
         state6 = 1
         time.sleep(t)
 
-    else:
-        print("Invalid identifier!")
     print("Light change: Amber ", n)
 
 def green(n):
@@ -414,8 +410,6 @@ def green(n):
         GPIO.output(9, True)
         state6 = 0
 
-    else:
-        print("Invalid identifier!")
     print("Light change: Green ", n)
 
 def off(n, t=3):
@@ -467,8 +461,6 @@ def off(n, t=3):
         state6 = 1
         time.sleep(t)
 
-    else:
-        print("Invalid identifier!")
     print("Light change: Off ", n)
 
 def getstate(a):
